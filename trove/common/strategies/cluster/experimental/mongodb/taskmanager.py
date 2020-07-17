@@ -97,7 +97,7 @@ class MongoDbClusterTasks(task_models.ClusterTasks):
             # for config_server in config_servers, append ip/hostname to
             # "config_server_hosts", then
             # peel off the replica-set name and ip/hostname from 'x'
-            config_server_ips = [self.get_ip(instance)
+            config_server_ips = [self.get_private_ip(instance)
                                  for instance in config_servers]
             LOG.debug("config server ips: %s", config_server_ips)
 

@@ -95,6 +95,8 @@ class InstanceDetailView(InstanceView):
         result = super(InstanceDetailView, self).data()
         result['instance']['created'] = self.instance.created
         result['instance']['updated'] = self.instance.updated
+        # NOTE(trungnv): Allow to show server_id with any users accounts
+        result['instance']['server_id'] = self.instance.server_id
         result['instance']['service_status_updated'] = (self.instance.
                                                         service_status_updated)
 

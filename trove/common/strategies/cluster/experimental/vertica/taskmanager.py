@@ -61,7 +61,7 @@ class VerticaClusterTasks(task_models.ClusterTasks):
             instances = [Instance.load(context, instance_id) for instance_id
                          in instance_ids]
 
-            member_ips = [self.get_ip(instance) for instance in instances]
+            member_ips = [self.get_private_ip(instance) for instance in instances]
             guests = [self.get_guest(instance) for instance in instances]
 
             # Users to be configured for password-less SSH.
@@ -136,7 +136,7 @@ class VerticaClusterTasks(task_models.ClusterTasks):
             all_guests = new_guests + existing_guests
 
             authorized_users_without_password = ['root', 'dbadmin']
-            new_ips = [self.get_ip(instance) for instance in new_insts]
+            new_ips = [self.get_private_ip(instance) for instance in new_insts]
 
             for user in authorized_users_without_password:
                 pub_key = [guest.get_public_keys(user) for guest in all_guests]
@@ -187,7 +187,7 @@ class VerticaClusterTasks(task_models.ClusterTasks):
                               in all_instance_ids
                               if instance_id not in instance_ids]
 
-            remove_member_ips = [self.get_ip(instance)
+            remove_member_ips = [self.get_private_ip(instance)
                                  for instance in remove_instances]
 
             k = VerticaCluster.k_safety(len(left_instances))

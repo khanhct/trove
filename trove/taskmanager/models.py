@@ -200,6 +200,10 @@ class ClusterTasks(Cluster):
     def get_ip(cls, instance):
         return instance.get_visible_ip_addresses()[0]
 
+    @classmethod
+    def get_private_ip(cls, instance):
+        return instance.get_private_ip_addresses()[0].get('address')
+
     def _all_instances_ready(self, instance_ids, cluster_id,
                              shard_id=None):
         """Wait for all instances to get READY."""
@@ -802,11 +806,30 @@ class FreshInstanceTasks(FreshInstance, NotifyMixin, ConfigurationMixin):
     def _build_sg_rules_mapping(self, rule_ports):
         final = []
         cidr = CONF.trove_security_group_rule_cidr
+        private_cidr = CONF.trove_security_group_private_rule_cidr
+        private_tcp_port = CONF.private_tcp_ports
+
+        # Set private security_group for monitoring service
+        private_2_cidr = CONF.trove_security_group_private_2_rule_cidr
+        private_2_tcp_port = CONF.private_2_tcp_ports
+        private_2_tcp_port_list = []
+        for private_2_port in set(private_2_tcp_port):
+            private_2_tcp_port_list.append(private_2_port[0])
+
         for port_or_range in set(rule_ports):
             from_, to_ = port_or_range[0], port_or_range[-1]
-            final.append({'cidr': cidr,
-                          'from_': str(from_),
-                          'to_': str(to_)})
+            if int(from_) in private_tcp_port:
+                final.append({'cidr': private_cidr,
+                              'from_': str(from_),
+                              'to_': str(to_)})
+            elif int(from_) in private_2_tcp_port_list:
+                final.append({'cidr': private_2_cidr,
+                              'from_': str(from_),
+                              'to_': str(to_)})
+            else:
+                final.append({'cidr': cidr,
+                              'from_': str(from_),
+                              'to_': str(to_)})
         return final
 
     def _create_server_volume(self, flavor_id, image_id, datastore_manager,

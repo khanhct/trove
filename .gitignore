@@ -23,6 +23,8 @@ trove.iml
 .testrepository
 .pid
 .stestr/
+.vscode/
+.idea/
 
 # Sphinx
 doc/build/*

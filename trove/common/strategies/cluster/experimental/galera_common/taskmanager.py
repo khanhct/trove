@@ -54,7 +54,7 @@ class GaleraCommonClusterTasks(task_models.ClusterTasks):
                                cluster_name, replication_user):
         client = create_nova_client(context)
         flavor = client.flavors.get(instance.flavor_id)
-        instance_ip = self.get_ip(instance)
+        instance_ip = self.get_private_ip(instance)
         config = ClusterConfigTemplate(
             self.datastore_version, flavor, instance.id)
         replication_user_pass = "%(name)s:%(password)s" % replication_user
@@ -85,7 +85,7 @@ class GaleraCommonClusterTasks(task_models.ClusterTasks):
             instances = [Instance.load(context, instance_id) for instance_id
                          in instance_ids]
 
-            cluster_ips = [self.get_ip(instance) for instance in instances]
+            cluster_ips = [self.get_private_ip(instance) for instance in instances]
             instance_guests = []
 
             # Create replication user and password for synchronizing the
@@ -175,7 +175,7 @@ class GaleraCommonClusterTasks(task_models.ClusterTasks):
                                    "member(s)"))
 
             # get list of ips of existing cluster members
-            existing_cluster_ips = [self.get_ip(instance) for instance in
+            existing_cluster_ips = [self.get_private_ip(instance) for instance in
                                     existing_instances]
             existing_instance_guests = [self.get_guest(instance)
                                         for instance in existing_instances]
@@ -193,7 +193,7 @@ class GaleraCommonClusterTasks(task_models.ClusterTasks):
             # Get the new instances to join the cluster
             new_instances = [Instance.load(context, instance_id)
                              for instance_id in new_instance_ids]
-            new_cluster_ips = [self.get_ip(instance) for instance in
+            new_cluster_ips = [self.get_private_ip(instance) for instance in
                                new_instances]
             for instance in new_instances:
                 guest = self.get_guest(instance)
@@ -287,7 +287,7 @@ class GaleraCommonClusterTasks(task_models.ClusterTasks):
             leftover_instances = [Instance.load(context, db_inst.id)
                                   for db_inst in db_instances
                                   if db_inst.id not in removal_instance_ids]
-            leftover_cluster_ips = [self.get_ip(instance) for instance in
+            leftover_cluster_ips = [self.get_private_ip(instance) for instance in
                                     leftover_instances]
 
             # Get config changes for left over instances

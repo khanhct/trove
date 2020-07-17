@@ -142,7 +142,7 @@ def load_simple_instance_server_status(context, db_info):
 
 
 # Invalid states to contact the agent
-AGENT_INVALID_STATUSES = ["BUILD", "REBOOT", "RESIZE", "PROMOTE", "EJECT",
+AGENT_INVALID_STATUSES = ["ERROR", "SHUTDOWN", "BUILD", "REBOOT", "RESIZE", "PROMOTE", "EJECT",
                           "UPGRADE"]
 
 
@@ -227,6 +227,18 @@ class SimpleInstance(object):
     @property
     def hostname(self):
         return self.db_info.hostname
+
+    def get_private_ip_addresses(self):
+        """Returns IPs that will be visible to the user."""
+        if self.addresses is None:
+            return None
+        private_ips = []
+        mgmt_networks = neutron.get_management_networks(self.context)
+
+        for label in self.addresses:
+            if label in mgmt_networks:
+                private_ips.append(label)
+        return private_ips
 
     def get_visible_ip_addresses(self):
         """Returns IPs that will be visible to the user."""
