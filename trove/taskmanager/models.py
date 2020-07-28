@@ -202,7 +202,7 @@ class ClusterTasks(Cluster):
 
     @classmethod
     def get_private_ip(cls, instance):
-        return instance.get_private_ip_addresses()[0].get('address')
+        return instance.get_private_ip_addresses()[0]
 
     def _all_instances_ready(self, instance_ids, cluster_id,
                              shard_id=None):

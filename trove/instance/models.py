@@ -237,7 +237,7 @@ class SimpleInstance(object):
 
         for label in self.addresses:
             if label in mgmt_networks:
-                private_ips.append(label)
+                private_ips.extend([addr.get('addr') for addr in self.addresses[label]])
         return private_ips
 
     def get_visible_ip_addresses(self):
